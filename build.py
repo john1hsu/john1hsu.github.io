@@ -46,6 +46,9 @@ GRAPHS = [
     ("wisdom-graph", "Wisdom",
      "Practices, virtues and teachings for judging, deciding and living well, from research and the great traditions.",
      ("#8A5A12", "#E0B261"), "a/"),
+    ("usa-graph", "United States",
+     "Land, Native nations, history, the Constitution, government, rights, people, economy and culture of the U.S.",
+     ("#A3242F", "#F0939A"), "a/"),
     ("chess-graph", "Chess",
      "Openings, strategy, tactics, endgames, history, players and computer chess.",
      ("#2F6B4F", "#86C9A4"), "articles/"),
@@ -119,7 +122,7 @@ def main() -> int:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Knowledge Graphs</title>
-<meta name="description" content="Cited, cross-linked knowledge graphs on Salesforce, AWS, AI, business, communication, critical thinking, wisdom and chess, each growing by one researched article an hour.">
+<meta name="description" content="Cited, cross-linked knowledge graphs on Salesforce, AWS, AI, business, communication, critical thinking, wisdom, the United States and chess, each growing by one researched article an hour.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap">
@@ -134,7 +137,7 @@ def main() -> int:
 <main>
   <section class="hero">
     <h1>Knowledge graphs</h1>
-    <p class="lede">Eight cited, cross-linked maps of the things I work on and study. Each grows by one researched article an hour, and every claim links to the source behind it.</p>
+    <p class="lede">Nine cited, cross-linked maps of the things I work on and study. Each grows by one researched article an hour, and every claim links to the source behind it.</p>
     <p class="stat">{tot_articles} articles · {tot_sources} cited sources · {len(GRAPHS)} graphs</p>
   </section>
   <section aria-labelledby="graphs-h">
