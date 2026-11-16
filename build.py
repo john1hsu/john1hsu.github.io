@@ -47,6 +47,9 @@ GRAPHS = [
     ("wisdom-graph", "Wisdom",
      "Practices, virtues and teachings for judging, deciding and living well, from research and the great traditions.",
      ("#8A5A12", "#E0B261"), "a/"),
+    ("bible-graph", "Bible",
+     "Every book, passage, person and theme of Scripture, with each tradition's view set out fairly.",
+     ("#6B2D5C", "#E3A3CF"), "a/"),
     ("usa-graph", "United States",
      "Land, Native nations, history, the Constitution, government, rights, people, economy and culture of the U.S.",
      ("#A3242F", "#F0939A"), "a/"),
@@ -175,7 +178,7 @@ def main() -> int:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Knowledge Graphs &amp; Quizzes</title>
-<meta name="description" content="Cited, cross-linked knowledge graphs on Salesforce, AWS, AI, business, communication, critical thinking, wisdom, the United States and chess, plus swipe-to-answer true-or-false quizzes built from them.">
+<meta name="description" content="Cited, cross-linked knowledge graphs on Salesforce, AWS, AI, business, communication, critical thinking, wisdom, the Bible, the United States and chess, plus swipe-to-answer true-or-false quizzes built from them.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap">
