@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the landing page for John's knowledge-graph sites and quiz apps.
+"""Build the landing page for John's knowledge-graph sites, quiz apps and world history.
 
 Usage:
   python3 build.py              # fetches each graph's index.json from GitHub, writes _site/
@@ -8,7 +8,8 @@ Usage:
 
 Each graph repo and quiz-bank repo publishes its own GitHub Pages site at
 https://john1hsu.github.io/<repo>/. This page lists them with live counts, read from each
-graph's graph/index.json and each quiz bank's index/questions.json. The Pages workflow
+graph's graph/index.json, each quiz bank's index/questions.json and world-history's
+index.json (plus its newest chapter, for the verse preview). The Pages workflow
 rebuilds it hourly, so the counts stay current without touching this repo.
 """
 from __future__ import annotations
@@ -69,6 +70,12 @@ QUIZZES = [
     ("communication-quiz-bank", "Communication", "communication-graph"),
 ]
 
+# the daily verse history: repo, title, blurb, accent (light, dark)
+HISTORY = ("world-history", "World History",
+           "The world, one day at a time: each day a chapter, each verse one sentence of dactylic "
+           "hexameter, every line sourced. Books are years, named for the famous dead.",
+           ("#8C2F1B", "#E39A85"))
+
 e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
 
 
@@ -99,6 +106,52 @@ def load_quiz(repo: str) -> tuple[int, int] | None:
     return n, len({q.get("area") for q in qs if q.get("area")})
 
 
+def history_card() -> tuple[str, int]:
+    """The World History card and its chapter count, from index.json and the newest chapter."""
+    repo, title, blurb, _ = HISTORY
+    site = f"https://{OWNER}.github.io/{repo}/"
+    idx = load_json(repo, "index.json")
+    books = [b for b in (idx or {}).get("books") or [] if b.get("chapters")]
+    links = [f'<a href="https://github.com/{OWNER}/{repo}">Source</a>']
+    preview, when, n_ch = "", "", 0
+    if books:
+        n_ch = sum(len(b["chapters"]) for b in books)
+        n_v = sum(c.get("verses", 0) for b in books for c in b["chapters"])
+        first, last = books[0], books[-1]
+        latest = last["chapters"][-1]
+        meta = "".join(plural(k, w) for k, w in [(len(books), "book"), (n_ch, "chapter"), (n_v, "verse")])
+        ref = f'{last["name"]} {latest["n"]}'
+        try:
+            day = datetime.strptime(latest["date"], "%Y-%m-%d").strftime("%A, %B %-d, %Y")
+        except ValueError:
+            day = latest["date"]
+        when = f'<p class="when">Latest: {e(ref)} · {e(day)}</p>'
+        ch = load_json(repo, latest["path"])
+        verses = (ch or {}).get("verses") or []
+        if verses and verses[0].get("text"):
+            preview = (f'<blockquote class="verse"><p>{e(verses[0]["text"])}</p>'
+                       f'<cite>{e(ref)}:1</cite></blockquote>')
+        read = f'{site}#{last["name"]}/{latest["n"]}/1'
+        start = f'{site}#{first["name"]}/{first["chapters"][0]["n"]}/1'
+        links = [f'<a href="{e(read)}">Read latest</a>', f'<a href="{e(start)}">From the beginning</a>'] + links
+    else:
+        read = site
+        meta = '<span>The first chapter is on its way</span>' if idx is not None else \
+               '<span>Counts unavailable right now</span>'
+        links = [f'<a href="{site}">Open reader</a>'] + links
+    card = f"""
+<li class="card history gh">
+  <a class="cover" href="{e(read)}" aria-label="{e(title)}, latest chapter"></a>
+  <h3>{e(title)}</h3>
+  <p class="blurb">{e(blurb)}</p>
+  {preview}
+  <p class="meta">{meta}</p>
+  {when}
+  <p class="links">{"".join(links)}</p>
+</li>"""
+    return card, n_ch
+
+
 def plural(k: int, w: str) -> str:
     return f'<span><b>{k}</b> {w if k == 1 else w + "s"}</span>'
 
@@ -115,6 +168,9 @@ def main() -> int:
     quiz_of = {src: repo for repo, _, src in QUIZZES}
 
     cards, recent, accents = [], [], []
+    hl, hd = HISTORY[3]
+    accents.append(f".gh{{--gc:{hl}}}@media (prefers-color-scheme: dark){{.gh{{--gc:{hd}}}}}")
+    hist_card, hist_chapters = history_card()
     tot_articles = tot_sources = 0
     for i, (repo, title, blurb, (light, dark), prefix) in enumerate(GRAPHS):
         site = f"https://{OWNER}.github.io/{repo}/"
@@ -179,8 +235,8 @@ def main() -> int:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Knowledge Graphs &amp; Quizzes</title>
-<meta name="description" content="Cited, cross-linked knowledge graphs on Salesforce, AWS, AI, business, communication, critical thinking, wisdom, the Bible, the United States and chess, plus swipe-to-answer true-or-false quizzes built from them.">
+<title>Knowledge Graphs, Quizzes &amp; History</title>
+<meta name="description" content="Cited, cross-linked knowledge graphs on Salesforce, AWS, AI, business, communication, critical thinking, wisdom, the Bible, the United States and chess, plus swipe-to-answer true-or-false quizzes built from them and a daily history of the world in verse.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap">
@@ -196,7 +252,12 @@ def main() -> int:
   <section class="hero">
     <h1>Knowledge graphs</h1>
     <p class="lede">Cited, cross-linked maps of the things I work on and study. Each grows by one researched article an hour, every claim links to the source behind it, and the quizzes turn them into daily practice.</p>
-    <p class="stat">{tot_articles} articles · {tot_sources} cited sources · {tot_questions} quiz questions · {len(GRAPHS)} graphs · {len(QUIZZES)} quizzes</p>
+    <p class="stat">{tot_articles} articles · {tot_sources} cited sources · {tot_questions} quiz questions · {hist_chapters} history chapter{'' if hist_chapters == 1 else 's'} · {len(GRAPHS)} graphs · {len(QUIZZES)} quizzes</p>
+  </section>
+  <section class="group" aria-labelledby="history-h">
+    <h2 id="history-h">History</h2>
+    <p class="sub">A chronicle of the world written every morning about the day before, in a full-screen reader for your phone. Swipe up for the next verse, and tap one for its plain meaning and source.</p>
+    <ul class="cards history-cards">{hist_card}</ul>
   </section>
   <section class="group" aria-labelledby="quizzes-h">
     <h2 id="quizzes-h">Quizzes</h2>

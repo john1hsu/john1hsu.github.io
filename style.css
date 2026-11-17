@@ -70,6 +70,13 @@ a { color: inherit; }
 .when a.inline { position: relative; color: var(--gc); text-decoration: none; }
 .when a.inline:hover { text-decoration: underline; }
 
+.cards.history-cards { grid-template-columns: minmax(0, 44rem); }
+.history .blurb { flex: 0 1 auto; }
+.history .verse { margin: 0 0 1.1rem; padding: .9rem 0 .9rem 1.1rem; border-left: 3px solid var(--gc); }
+.history .verse p { margin: 0; font: italic 400 clamp(1.2rem, 3.6vw, 1.45rem)/1.4 var(--font-body); color: var(--ink); }
+.history .verse cite { display: block; margin-top: .45rem; font: 600 .75rem/1.4 var(--font-ui);
+  letter-spacing: .12em; text-transform: uppercase; font-style: normal; color: var(--gc); }
+
 .recent { margin: 3.5rem 0 1rem; }
 .recent h2 { font: 700 1.5rem/1.2 var(--font-ui); letter-spacing: -0.02em; margin: 0 0 1rem; }
 .recent ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
