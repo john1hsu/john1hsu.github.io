@@ -66,6 +66,7 @@ QUIZZES = [
     ("ai-quiz-bank", "Artificial Intelligence", "ai-knowledge-graph"),
     ("business-quiz-bank", "Business", "business-knowledge-graph"),
     ("critical-thinking-quiz-bank", "Critical Thinking", "critical-thinking-graph"),
+    ("communication-quiz-bank", "Communication", "communication-graph"),
 ]
 
 e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
